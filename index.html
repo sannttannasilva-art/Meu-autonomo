@@ -63,7 +63,7 @@ nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}nav button{flex:1;min-widt
   <label>WhatsApp com DDD *</label><input id="phone" required inputmode="tel" placeholder="Ex.: 86999998888">
   <label>Descrição dos serviços</label><textarea id="description" maxlength="500" placeholder="Conte quais serviços você realiza"></textarea>
   <label>Foto do serviço (opcional)</label><input id="photo" type="file" accept="image/*">
-  <p class="small">Nesta versão de demonstração, o perfil e a foto ficam salvos somente neste aparelho.</p>
+  <p class="small">O perfil será salvo neste aparelho e, com o banco online conectado, a foto poderá ser enviada para a internet.</p>
   <button class="btn" type="submit" style="width:100%">Salvar meu cadastro gratuito</button>
  </form></div>
  <button class="btn outline" onclick="show('home')">Voltar ao início</button>
@@ -141,8 +141,18 @@ profileForm.addEventListener('submit',async function(e){
   if(phone.length<10||phone.length>13){setStatus('Confira o WhatsApp com DDD.');return;}
   let photo=''; const file=document.getElementById('photo').files[0];
   if(file){
-   if(file.size>900000){setStatus('Escolha uma foto de até 900 KB.');return;}
-   photo=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(new Error('Não foi possível ler a foto.'));reader.readAsDataURL(file);});
+   if(file.size>5*1024*1024){setStatus('Escolha uma foto de até 5 MB.');return;}
+   if(!file.type.startsWith('image/')){setStatus('Escolha um arquivo de imagem.');return;}
+if(initSupabase()){
+ const extension=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+ const path=Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+extension;
+ const upload=await supabaseClient.storage.from('fotos-profissionais').upload(path,file,{contentType:file.type,upsert:false});
+ if(upload.error){setStatus('Não foi possível enviar a foto: '+upload.error.message);return;}
+ const publicResult=supabaseClient.storage.from('fotos-profissionais').getPublicUrl(path);
+ photo=publicResult.data.publicUrl;
+}else{
+ photo=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||''));reader.onerror=()=>reject(new Error('Não foi possível ler a foto.'));reader.readAsDataURL(file);});
+}
   }
   const profile={id:Date.now(),name:value('name'),job:selectedJob,city:value('city'),state:value('state'),phone,description:value('description'),photo};
   if(!profile.name||!profile.city||!profile.state){setStatus('Preencha nome, cidade e estado.');return;}
@@ -150,10 +160,10 @@ profileForm.addEventListener('submit',async function(e){
   try { saveProfiles(profiles); } catch(storageError) { setStatus('O navegador não conseguiu salvar neste aparelho. Verifique o espaço disponível.'); return; }
   if(initSupabase()){
    setStatus('Enviando cadastro ao banco online…');
-   const row={nome:profile.name,profissao:profile.job,cidade:profile.city,estado:profile.state,whatsapp:profile.phone,descricao:profile.description,foto_url:''};
+   const row={nome:profile.name,profissao:profile.job,cidade:profile.city,estado:profile.state,whatsapp:profile.phone,descricao:profile.description,foto_url:profile.photo||''};
    const result=await supabaseClient.from('profissionais').insert(row);
    if(result.error){setStatus('Salvo somente neste aparelho. O banco online recusou: '+result.error.message);return;}
-   profileForm.reset();setStatus('Cadastro enviado ao banco online e salvo neste aparelho. A foto ainda fica somente neste aparelho.');
+  profileForm.reset();setStatus(profile.photo?'Cadastro enviado ao banco online e foto enviada para a internet.':'Cadastro enviado ao banco online. Nenhuma foto foi selecionada.');
    return;
   }
   profileForm.reset();setStatus('Cadastro salvo neste aparelho. Para aparecer para outras pessoas, configure e teste o banco online.');
@@ -175,7 +185,7 @@ async function searchProfessionals(){
   if(online){
    const response=await supabaseClient.from('profissionais').select('id,nome,profissao,cidade,estado,whatsapp,descricao,foto_url').limit(200);
    if(response.error){results.innerHTML='<div class="card empty">Não foi possível consultar o banco online: '+safe(response.error.message)+'</div>';return;}
-   found=(response.data||[]).map(r=>({id:r.id,name:r.nome,job:r.profissao,city:r.cidade,state:r.estado,phone:r.whatsapp,description:r.descricao||'',photo:''}));
+   found=(response.data||[]).map(r=>({id:r.id,name:r.nome,job:r.profissao,city:r.cidade,state:r.estado,phone:r.whatsapp,description:r.descricao||'',photo:r.foto_url||''}));
   } else { found=getProfiles(); }
   found=found.filter(p=>(!j||String(p.job||'').toLowerCase().includes(j)||String(p.description||'').toLowerCase().includes(j))&&(!c||String(p.city||'').toLowerCase().includes(c))&&(!s||p.state===s));
   results.innerHTML=found.length?`<p>${found.length} perfil(is) encontrado(s) ${online?'no banco online':'neste aparelho'}:</p>`+found.map(card).join(''):'<div class="card empty">Nenhum profissional encontrado com esses filtros.</div>';
