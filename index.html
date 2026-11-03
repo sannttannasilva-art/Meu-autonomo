@@ -58,6 +58,11 @@ nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}nav button{flex:1;min-widt
    <option value="Outra profissão">Outra profissão</option>
   </select>
   <div id="otherJobWrap" class="hidden"><label>Digite sua profissão</label><input id="otherJob" maxlength="70"></div>
+  <div>
+  <label>Outras profissões ou serviços (opcional)</label>
+  <input id="extraJobs" maxlength="200" placeholder="Ex.: Pintor, Encanador, Eletricista">
+  <p class="small">Separe as profissões por vírgula.</p>
+  </div>
   <label>Cidade *</label><input id="city" required maxlength="60" placeholder="Sua cidade">
   <label>Estado *</label><select id="state" required><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select>
   <label>WhatsApp com DDD *</label><input id="phone" required inputmode="tel" placeholder="Ex.: 86999998888">
@@ -135,7 +140,9 @@ profileForm.addEventListener('submit',async function(e){
  try {
   if(!profileForm.reportValidity()) return;
   const value=(id)=>document.getElementById(id).value.trim();
-  const selectedJob=value('job')==='Outra profissão'?value('otherJob'):value('job');
+  const mainJob=value('job')==='Outra profissão'?value('otherJob'):value('job');
+const extraJobs=value('extraJobs');
+const selectedJob=[mainJob,...extraJobs.split(',').map(x=>x.trim()).filter(Boolean)].join(', ');
   const phone=value('phone').replace(/\D/g,'');
   if(!selectedJob){setStatus('Informe sua profissão.');return;}
   if(phone.length<10||phone.length>13){setStatus('Confira o WhatsApp com DDD.');return;}
