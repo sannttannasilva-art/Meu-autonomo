@@ -179,7 +179,21 @@ if(initSupabase()){
   setStatus('Não foi possível concluir: '+(err && err.message ? err.message : 'verifique a internet e tente novamente.'));
  } finally { if(submitButton) submitButton.disabled=false; }
 });
-function card(p){const wa='https://wa.me/55'+p.phone.replace(/^55/,'');return `<article class="result"><strong>${safe(p.name)}</strong><br><span class="pill">${safe(p.job)}</span><p>📍 ${safe(p.city)} - ${safe(p.state)}</p><p>${safe(p.description)}</p>${p.photo?`<img src="${p.photo}" alt="Foto do serviço">`:''}<div class="actions"><a class="btn" style="text-decoration:none" href="${wa}" target="_blank" rel="noopener">Conversar no WhatsApp</a></div></article>`}
+function card(p){
+ const wa='https://wa.me/55'+p.phone.replace(/^55/,'');
+ const jobs=String(p.job||'').split(',').map(x=>x.trim()).filter(Boolean);
+ const jobTags=jobs.map(job=>`<span class="pill">${safe(job)}</span>`).join(' ');
+ return `<article class="result">
+ <strong>${safe(p.name)}</strong><br>
+ <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${jobTags}</div>
+ <p>📍 ${safe(p.city)} - ${safe(p.state)}</p>
+ <p>${safe(p.description)}</p>
+ ${p.photo?`<img src="${p.photo}" alt="Foto do serviço">`:''}
+ <div class="actions">
+ <a class="btn" style="text-decoration:none" href="${wa}" target="_blank" rel="noopener">Conversar no WhatsApp</a>
+ </div>
+ </article>`;
+}
 async function searchProfessionals(){
  const results=document.getElementById('results');
  const j=document.getElementById('qjob').value.toLowerCase().trim();
