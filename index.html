@@ -183,14 +183,14 @@ function card(p){
  const wa='https://wa.me/55'+p.phone.replace(/^55/,'');
  const jobs=String(p.job||'').split(',').map(x=>x.trim()).filter(Boolean);
  const jobTags=jobs.map(job=>`<span class="pill">${safe(job)}</span>`).join(' ');
- return `<article class="result">
- <strong>${safe(p.name)}</strong><br>
- <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${jobTags}</div>
- <p>📍 ${safe(p.city)} - ${safe(p.state)}</p>
+ return `<article class="result" style="padding:16px;border-radius:18px;box-shadow:0 4px 14px #183b2415">
+ <strong style="font-size:20px;color:#14532d">${safe(p.name)}</strong>
+ <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">${jobTags}</div>
+ <p style="font-weight:650;color:#166534">📍 ${safe(p.city)} - ${safe(p.state)}</p>
+ ${p.photo?`<img src="${p.photo}" alt="Foto do serviço" style="width:100%;height:230px;max-height:230px;object-fit:cover;border-radius:13px;margin-top:10px">`:''}
  <p>${safe(p.description)}</p>
- ${p.photo?`<img src="${p.photo}" alt="Foto do serviço">`:''}
  <div class="actions">
- <a class="btn" style="text-decoration:none" href="${wa}" target="_blank" rel="noopener">Conversar no WhatsApp</a>
+ <a class="btn" style="text-decoration:none;width:100%;text-align:center;padding:15px" href="${wa}" target="_blank" rel="noopener">🟢 Conversar no WhatsApp</a>
  </div>
  </article>`;
 }
