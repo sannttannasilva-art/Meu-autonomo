@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14532d">
+<title>Meu Autônomo</title>
+<style>
+:root{--green:#166534;--dark:#14532d;--light:#f0fdf4;--ink:#17231b;--muted:#647067;--line:#dce8df}
+*{box-sizing:border-box}body{margin:0;background:#f5f8f5;color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(135deg,#14532d,#15803d);color:white;padding:25px 18px 22px;border-radius:0 0 24px 24px}
+.brand{font-size:27px;font-weight:800;letter-spacing:-.7px}.tag{opacity:.9;margin-top:4px;font-size:14px}
+main{max-width:680px;margin:auto;padding:16px}.card{background:white;border:1px solid var(--line);border-radius:17px;padding:16px;margin:13px 0;box-shadow:0 3px 12px #183b2410}
+h2{font-size:19px;margin:3px 0 12px}p{color:var(--muted);line-height:1.45}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;padding:13px 15px;background:var(--green);color:white;font-weight:700;font-size:15px;cursor:pointer}.btn.secondary{background:#e8f5eb;color:var(--dark)}.btn.outline{background:white;color:var(--green);border:1px solid var(--green)}
+label{display:block;font-weight:650;font-size:14px;margin:12px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #cbd8ce;border-radius:10px;font:inherit;background:white}textarea{min-height:82px;resize:vertical}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.hidden{display:none!important}.pill{display:inline-block;background:#e8f5eb;color:#166534;padding:5px 9px;border-radius:99px;font-size:12px;font-weight:700}
+.result{border:1px solid var(--line);padding:13px;border-radius:13px;margin:10px 0;background:#fff}.result img{width:100%;max-height:190px;object-fit:cover;border-radius:9px;margin-top:8px}.small{font-size:13px;color:var(--muted)}.empty{text-align:center;padding:18px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}nav button{flex:1;min-width:105px}
+.ai-launch{position:fixed;right:16px;bottom:18px;z-index:5;border:0;border-radius:999px;padding:14px 17px;background:#14532d;color:white;font-weight:800;box-shadow:0 5px 18px #0003}
+.chat{background:#f0fdf4;border:1px solid #cde5d2;border-radius:14px;padding:12px;min-height:150px;max-height:310px;overflow:auto}
+.bubble{background:white;border:1px solid #dce8df;border-radius:12px;padding:10px;margin:8px 0;max-width:92%;line-height:1.4}.bubble.user{margin-left:auto;background:#dcfce7}.quick{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.quick button{border:1px solid #166534;background:white;color:#14532d;border-radius:20px;padding:8px 11px;font-weight:650}
+</style>
+</head>
+<body>
+<header><div class="brand">🧰 Meu Autônomo</div><div class="tag">Encontre. Divulgue. Trabalhe. • Brasil</div></header>
+<main>
+<section id="home">
+ <div class="card">
+  <span class="pill">Cadastro gratuito</span>
+  <h2>Bem-vindo(a) ao Meu Autônomo!</h2>
+  <p>Encontre profissionais ou divulgue seus serviços sem pagar inscrição, mensalidade ou comissão pelo aplicativo.</p>
+  <div class="grid">
+   <button class="btn" onclick="show('register')">Sou profissional</button>
+   <button class="btn secondary" onclick="show('search')">Sou cliente</button>
+  </div>
+ </div>
+ <div class="card"><h2>O que você pode fazer</h2><p>🔎 Buscar por profissão e cidade<br>📷 Mostrar fotos dos serviços<br>🟢 Conversar diretamente pelo WhatsApp<br>📝 Solicitar orçamento sem pagar nada</p><button class="btn secondary" onclick="show('quote')">Solicitar orçamento</button></div>
+ <div class="card"><h2>Como funciona?</h2><p>Profissionais criam um perfil gratuito. Clientes pesquisam e entram em contato diretamente com o profissional.</p></div>
+ <div class="card"><h2>🤖 Conheça a IA Meu Autônomo</h2><p>Receba orientação passo a passo para cadastrar seus serviços ou encontrar o profissional certo.</p><button class="btn" onclick="startAI()">Conversar com a IA</button></div>
+</section>
+<section id="assistant" class="hidden">
+ <div class="card"><span class="pill">Assistente de orientação</span><h2>🤖 IA Meu Autônomo</h2><p>Olá! Vou orientar você. Não precisa saber preencher tudo sozinho.</p><div id="chatLog" class="chat" aria-live="polite"><div class="bubble">Olá! Sou a IA Meu Autônomo. Como posso ajudar?</div></div><div id="quickActions" class="quick"><button onclick=&quot;aiChoose('profissional')&quot;>Quero divulgar meu serviço</button><button onclick=&quot;aiChoose('cliente')&quot;>Quero encontrar um profissional</button></div><form id="chatForm"><label for="chatInput">Digite sua resposta</label><input id="chatInput" maxlength="240" placeholder="Escreva aqui..."><button class="btn" style="width:100%;margin-top:9px" type="submit">Enviar</button></form><p class="small">Esta versão oferece orientação automática por etapas. A conexão com um serviço de IA generativa ainda precisa ser configurada; não envie documentos, senhas ou dados bancários aqui.</p></div>
+ <button class="btn outline" onclick="show('home')">Voltar ao início</button>
+</section>
+<section id="register" class="hidden">
+ <div class="card"><h2>Cadastro gratuito de profissional</h2>
+ <form id="form">
+  <label>Nome completo *</label><input id="name" required maxlength="70" placeholder="Seu nome">
+  <label>Profissão ou serviço *</label><select id="job" required>
+   <option value="">Escolha sua profissão</option>
+   <option>Pedreiro</option><option>Eletricista</option><option>Encanador</option><option>Pintor</option>
+   <option>Diarista</option><option>Manicure</option><option>Cabeleireiro</option><option>Costureira</option>
+   <option>Motorista</option><option>Jardineiro</option><option>Cozinheiro(a)</option><option>Técnico de informática</option>
+   <option>Técnico de ar-condicionado</option><option>Entregador</option><option>Montador de móveis</option>
+   <option>Chaveiro</option><option> cuidador(a)</option><option>Fotógrafo(a)</option><option>Professor(a) particular</option>
+   <option value="Outra profissão">Outra profissão</option>
+  </select>
+  <div id="otherJobWrap" class="hidden"><label>Digite sua profissão</label><input id="otherJob" maxlength="70"></div>
+  <label>Cidade *</label><input id="city" required maxlength="60" placeholder="Sua cidade">
+  <label>Estado *</label><select id="state" required><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select>
+  <label>WhatsApp com DDD *</label><input id="phone" required inputmode="tel" placeholder="Ex.: 86999998888">
+  <label>Descrição dos serviços</label><textarea id="description" maxlength="500" placeholder="Conte quais serviços você realiza"></textarea>
+  <label>Foto do serviço (opcional)</label><input id="photo" type="file" accept="image/*">
+  <p class="small">Nesta versão de demonstração, o perfil e a foto ficam salvos somente neste aparelho.</p>
+  <button class="btn" type="submit" style="width:100%">Salvar meu cadastro gratuito</button>
+ </form></div>
+ <button class="btn outline" onclick="show('home')">Voltar ao início</button>
+</section>
+<section id="search" class="hidden">
+ <div class="card"><h2>Encontre um profissional</h2>
+  <label>Profissão ou serviço</label><input id="qjob" placeholder="Ex.: pedreiro, costureira, manicure">
+  <label>Cidade</label><input id="qcity" placeholder="Ex.: Teresina">
+  <label>Estado</label><select id="qstate"><option value="">Todos os estados</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select>
+  <button class="btn" style="width:100%;margin-top:14px" onclick="search()">Pesquisar</button>
+ </div><div id="results"></div><button class="btn outline" onclick="show('home')">Voltar ao início</button>
+</section>
+<section id="quote" class="hidden">
+ <div class="card"><h2>Solicitar orçamento gratuito</h2><p>Descreva o serviço que precisa. Nesta demonstração, o pedido fica salvo apenas neste aparelho.</p>
+ <form id="quoteForm">
+  <label>Seu nome *</label><input id="clientName" required maxlength="70">
+  <label>Serviço desejado *</label><input id="wantedJob" required maxlength="100" placeholder="Ex.: consertar uma torneira">
+  <label>Cidade *</label><input id="clientCity" required maxlength="60">
+  <label>Estado *</label><select id="clientState" required><option value="">Selecione</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select>
+  <label>Detalhes do pedido</label><textarea id="quoteDetails" maxlength="500" placeholder="Explique o que precisa"></textarea>
+  <button class="btn" type="submit" style="width:100%">Salvar pedido gratuito</button>
+ </form></div><button class="btn outline" onclick="show('home')">Voltar ao início</button>
+</section>
+<section id="mine" class="hidden"><div class="card"><h2>Perfis salvos neste aparelho</h2><div id="mineList"></div></div><div class="card"><h2>Pedidos de orçamento neste aparelho</h2><div id="quoteList"></div></div><button class="btn outline" onclick="show('home')">Voltar ao início</button></section>
+<nav><button class="btn secondary" onclick="show('home')">Início</button><button class="btn secondary" onclick="show('search')">Buscar</button><button class="btn secondary" onclick="show('register')">Cadastrar</button><button class="btn secondary" onclick="show('quote')">Orçamento</button><button class="btn secondary" onclick="show('mine')">Meus dados</button><button class="btn secondary" onclick="startAI()">🤖 IA</button></nav>
+</main>
+<button class="ai-launch" onclick="startAI()">🤖 Ajuda IA</button>
+<footer>Meu Autônomo • Protótipo gratuito<br>Não há cobrança para cadastro nesta versão.</footer>
+<script>
+const KEY='meuAutonomoProfilesV1';
+const getProfiles=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}};
+const saveProfiles=p=>localStorage.setItem(KEY,JSON.stringify(p));
+function show(id){['home','register','search','quote','mine','assistant'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));if(id==='mine')renderMine();if(id==='search')document.getElementById('results').innerHTML='';window.scrollTo(0,0)}
+const QUOTE_KEY='meuAutonomoQuotesV1';
+const getQuotes=()=>{try{return JSON.parse(localStorage.getItem(QUOTE_KEY)||'[]')}catch(e){return []}};
+document.getElementById('job').addEventListener('change',()=>{document.getElementById('otherJobWrap').classList.toggle('hidden',document.getElementById('job').value!=='Outra profissão')});
+document.getElementById('quoteForm').addEventListener('submit',e=>{e.preventDefault();const q={id:Date.now(),name:clientName.value.trim(),job:wantedJob.value.trim(),city:clientCity.value.trim(),state:clientState.value,details:quoteDetails.value.trim()};const all=getQuotes();all.push(q);try{localStorage.setItem(QUOTE_KEY,JSON.stringify(all))}catch(err){alert('Não foi possível salvar este pedido.');return}e.target.reset();alert('Pedido salvo neste aparelho. Para chegar a profissionais de todo o Brasil, ainda falta ativar o banco de dados online.');show('mine')});
+function safe(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+document.getElementById('form').addEventListener('submit',async e=>{
+ e.preventDefault();const file=document.getElementById('photo').files[0];let photo='';
+ if(file){if(file.size>900000){alert('Escolha uma foto de até 900 KB para esta demonstração.');return}photo=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+ const selectedJob=job.value==='Outra profissão'?otherJob.value.trim():job.value;
+ if(!selectedJob){alert('Informe sua profissão.');return}
+ const p={id:Date.now(),name:name.value.trim(),job:selectedJob,city:city.value.trim(),state:state.value,phone:phone.value.replace(/\D/g,''),description:description.value.trim(),photo};
+ if(p.phone.length<10||p.phone.length>13){alert('Confira o número do WhatsApp com DDD.');return}
+ const all=getProfiles();all.push(p);
+ try{saveProfiles(all)}catch(err){alert('Não foi possível salvar. Tente uma foto menor.');return}
+ e.target.reset();alert('Cadastro salvo neste aparelho! Para aparecer para outras pessoas, ainda será necessário conectar o aplicativo a um banco de dados online.');show('mine');
+});
+function card(p){const wa='https://wa.me/55'+p.phone.replace(/^55/,'');return `<article class="result"><strong>${safe(p.name)}</strong><br><span class="pill">${safe(p.job)}</span><p>📍 ${safe(p.city)} - ${safe(p.state)}</p><p>${safe(p.description)}</p>${p.photo?`<img src="${p.photo}" alt="Foto do serviço">`:''}<div class="actions"><a class="btn" style="text-decoration:none" href="${wa}" target="_blank" rel="noopener">Conversar no WhatsApp</a></div></article>`}
+function search(){const j=document.getElementById('qjob').value.toLowerCase().trim(),c=document.getElementById('qcity').value.toLowerCase().trim(),s=document.getElementById('qstate').value;const found=getProfiles().filter(p=>(!j||p.job.toLowerCase().includes(j)||p.description.toLowerCase().includes(j))&&(!c||p.city.toLowerCase().includes(c))&&(!s||p.state===s));document.getElementById('results').innerHTML=found.length?`<p>${found.length} perfil(is) encontrado(s) neste aparelho:</p>`+found.map(card).join(''):'<div class="card empty">Nenhum perfil encontrado neste aparelho. Os resultados ainda não são compartilhados pela internet.</div>'}
+function renderMine(){const a=getProfiles();document.getElementById('mineList').innerHTML=a.length?a.map(p=>card(p)+`<button class="btn outline" onclick="removeProfile(${p.id})">Excluir perfil</button>`).join(''):'<p>Nenhum perfil cadastrado neste aparelho.</p>';const qs=getQuotes();document.getElementById('quoteList').innerHTML=qs.length?qs.map(q=>`<div class="result"><strong>${safe(q.job)}</strong><p>${safe(q.name)} • ${safe(q.city)} - ${safe(q.state)}</p><p>${safe(q.details)}</p></div>`).join(''):'<p>Nenhum pedido de orçamento neste aparelho.</p>'}
+function removeProfile(id){if(confirm('Excluir este perfil deste aparelho?')){saveProfiles(getProfiles().filter(p=>p.id!==id));renderMine()}}
+let aiRole='',aiStep=0,aiData={};
+function addBubble(message,who='ai'){const el=document.createElement('div');el.className='bubble'+(who==='user'?' user':'');el.textContent=message;document.getElementById('chatLog').appendChild(el);document.getElementById('chatLog').scrollTop=99999}
+function startAI(){show('assistant');document.getElementById('chatLog').innerHTML='';aiRole='';aiStep=0;aiData={};addBubble('Olá! Sou a IA Meu Autônomo. Vou ajudar você gratuitamente. Você é profissional ou cliente?');document.getElementById('quickActions').innerHTML=`<button onclick="aiChoose('profissional')">Sou profissional</button><button onclick="aiChoose('cliente')">Sou cliente</button>`;}
+function aiChoose(role){aiRole=role;aiStep=1;document.getElementById('quickActions').innerHTML='';addBubble(role==='profissional'?'Quero ajudar você a preparar seu anúncio. Qual é seu nome?':'Vamos encontrar um serviço. Qual profissão ou serviço você procura?');document.getElementById('chatInput').focus()}
+document.getElementById('chatForm').addEventListener('submit',e=>{e.preventDefault();const input=document.getElementById('chatInput'),v=input.value.trim();if(!v)return;addBubble(v,'user');input.value='';if(!aiRole){addBubble('Escolha uma opção: profissional ou cliente.');return}
+ if(aiRole==='profissional'){
+  if(aiStep===1){aiData.name=v;aiStep++;addBubble('Obrigado, '+v+'! Qual serviço ou profissão você oferece?');}
+  else if(aiStep===2){aiData.job=v;aiStep++;addBubble('Em qual cidade e estado você atende? Exemplo: Teresina - PI.');}
+  else if(aiStep===3){aiData.place=v;aiStep++;addBubble('Agora escreva seu WhatsApp com DDD.');}
+  else if(aiStep===4){aiData.phone=v;aiStep++;addBubble('Conte brevemente quais trabalhos você realiza.');}
+  else if(aiStep===5){aiData.description=v;aiStep++;addBubble('Ótimo! Posso levar essas informações para o formulário. Depois você confere, completa o estado e escolhe uma foto.');document.getElementById('quickActions').innerHTML='<button onclick="aiFillProfile()">Preencher meu cadastro</button><button onclick="startAI()">Recomeçar</button>';}
+ }else{
+  if(aiStep===1){aiData.job=v;aiStep++;addBubble('Em qual cidade você precisa desse serviço?');}
+  else if(aiStep===2){aiData.city=v;aiStep++;addBubble('Perfeito. Vou abrir a busca com esses dados para você conferir os resultados disponíveis neste aparelho.');document.getElementById('quickActions').innerHTML='<button onclick="aiSearch()">Buscar profissionais</button><button onclick="startAI()">Nova busca</button>';}
+ }
+});
+function aiFillProfile(){show('register');document.getElementById('name').value=aiData.name||'';const jobSelect=document.getElementById('job');const match=[...jobSelect.options].find(o=>o.text.toLowerCase()===String(aiData.job||'').toLowerCase());if(match)jobSelect.value=match.value;else{jobSelect.value='Outra profissão';document.getElementById('otherJobWrap').classList.remove('hidden');document.getElementById('otherJob').value=aiData.job||'';}document.getElementById('description').value=aiData.description||'';document.getElementById('phone').value=aiData.phone||'';const bits=(aiData.place||'').split('-').map(x=>x.trim());if(bits[0])document.getElementById('city').value=bits[0];const st=document.getElementById('state');if(bits[1]&&[...st.options].some(o=>o.value===bits[1].toUpperCase()))st.value=bits[1].toUpperCase();alert('Revise os dados, complete o que faltar e escolha sua foto antes de salvar.');}
+function aiSearch(){show('search');document.getElementById('qjob').value=aiData.job||'';document.getElementById('qcity').value=aiData.city||'';search();}
+</script>
+</body></html>
